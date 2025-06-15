@@ -1,0 +1,58 @@
+# Flutter
+build/
+.dart_tool/
+.packages
+.pub-cache/
+.flutter-plugins
+.flutter-plugins-dependencies
+.melos_tool/
+.dart_tool/
+.idea/
+.android/
+.ios/
+linux/
+macos/
+web/
+windows/
+.flutter-*
+
+# Firebase
+firebase_app_id_file.json
+firebase.json
+*.firebase/
+*.firebaserc
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+# Arquivos de ambiente
+.env
+.env.*
+
+# Arquivos de IDEs
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+
+# Arquivos do Xcode
+*.xcuserstate
+*.xcworkspace
+*.xcodeproj
+*.xcsettings
+*.xccheckout
+
+# Android Studio
+.gradle/
+local.properties
+
+# Outros temporários
+*.log
+*.tmp
+*.bak
+*.old
+*.orig
+
+# Node (se usar Firebase Hosting ou funções)
+node_modules/
+functions/node_modules/
