@@ -1,3 +1,4 @@
+import 'package:ap2/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'neo_screen.dart';
 
@@ -8,6 +9,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         title: Row(
@@ -21,6 +23,13 @@ class HomeScreen extends StatelessWidget {
               'NASA',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
+            Spacer(),
+            const Icon(
+              Icons.account_circle,
+              color: Colors.white,
+              size: 30,
+              semanticLabel: 'Profile picture',
+            )
           ],
         ),
       ),
