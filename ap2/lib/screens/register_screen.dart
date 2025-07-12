@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:video_player/video_player.dart';
 import 'home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -11,41 +10,33 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  late VideoPlayerController _controller;
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _controller = VideoPlayerController.asset("assets/videos/asteroidVideo.mp4")
-  //
-  //     ..initialize().then((_) {
-  //       _controller.play();
-  //       _controller.setLooping(true);
-  //       // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-  //       setState(() {});
-  //     });
-  //
-  // }
-
   bool _isLoading = false;
+
   Future<void> _register() async {
-    if (_passwordController.text.trim() != _confirmPasswordController.text.trim()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Passwords do not match")),
-      );
+    if (_passwordController.text.trim() !=
+        _confirmPasswordController.text.trim()) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Passwords do not match")));
       return;
     }
 
     setState(() => _isLoading = true);
 
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+
+      // Atualiza o displayName
+      await userCredential.user!.updateDisplayName(_nameController.text.trim());
+      await userCredential.user!.reload();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Registration completed successfully")),
@@ -59,13 +50,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error registering: $e")),
       );
-    } finally {
-      setState(() => _isLoading = false);
     }
+
   }
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -79,25 +70,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         centerTitle: true,
-        title:
-        Image.network(
+        title: Image.network(
           'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/NASA_logo.svg/600px-NASA_logo.svg.png',
           height: 40,
         ),
       ),
-    //   body: _controller.value.isInitialized
-    //       ? Stack(
-    //     children: [
-    //   SizedBox.expand(
-    //   child: FittedBox(
-    //   fit: BoxFit.cover,
-    //     child: SizedBox(
-    //       width: _controller.value.size.width,
-    //       height: _controller.value.size.height,
-    //       child: VideoPlayer(_controller),
-    //     ),
-    //   ),
-    // ),
       body: Stack(
         children: [
           Opacity(
@@ -109,7 +86,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               height: double.infinity,
             ),
           ),
-
           Center(
             child: Container(
               padding: const EdgeInsets.all(24),
@@ -131,9 +107,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 20),
                   TextField(
+                    controller: _nameController,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Nickname',
+                      labelStyle: const TextStyle(color: Colors.white),
+                      filled: true,
+                      fillColor: Colors.white12,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
                     controller: _emailController,
                     style: const TextStyle(color: Colors.white),
-                    decoration:  InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Email',
                       labelStyle: const TextStyle(color: Colors.white),
                       filled: true,
@@ -185,12 +175,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
         ],
-      )
-
-      //   ],
-      // )
-      //     : const Center(child: CircularProgressIndicator()),
+      ),
     );
-
   }
 }

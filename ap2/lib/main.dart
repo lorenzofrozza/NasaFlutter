@@ -1,4 +1,8 @@
+import 'package:ap2/screens/home_screen.dart';
+import 'package:ap2/screens/login_screen.dart';
 import 'package:ap2/screens/no_login_home_screen.dart';
+import 'package:ap2/screens/profile_screen.dart';
+import 'package:ap2/screens/settings_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'firebase_options.dart';
@@ -17,10 +21,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'NASA Explorer',
-      debugShowCheckedModeBanner: false,
-      home: const NoLoginHomeScreen(),
+    return (MaterialApp(
+        debugShowCheckedModeBanner: false,
+        initialRoute: '/homeNoLogin',
+        routes: {
+        '/login': (context) => const LoginScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/homeNoLogin': (context) => const NoLoginHomeScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/settings': (context) => const SettingsScreen(),
+        },
+    )
     );
   }
 }

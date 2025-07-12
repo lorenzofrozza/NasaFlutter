@@ -1,13 +1,84 @@
-import 'package:ap2/screens/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'neo_screen.dart';
+import 'no_login_home_screen.dart';
+import 'profile_screen.dart';
+import 'settings_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  void _openDrawer() {
+    _scaffoldKey.currentState?.openEndDrawer();
+  }
+
+  void _logout(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const NoLoginHomeScreen()),
+          (route) => false,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
+      key: _scaffoldKey,
+      endDrawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            UserAccountsDrawerHeader(
+              decoration: const BoxDecoration(color: Colors.black),
+              accountName: Text(user?.displayName ?? 'Usuário'),
+              accountEmail: Text(user?.email ?? 'email@exemplo.com'),
+              currentAccountPicture: const CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Icon(Icons.person, size: 40),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Profile'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                );
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Log out'),
+              onTap: () => _logout(context),
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.black,
@@ -23,16 +94,23 @@ class HomeScreen extends StatelessWidget {
               'NASA',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            Spacer(),
-            const Icon(
-              Icons.account_circle,
-              color: Colors.white,
-              size: 30,
-              semanticLabel: 'Profile picture',
-            )
           ],
         ),
+        actions: [
+          GestureDetector(
+            onTap: _openDrawer,
+            child: const Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: Icon(
+                Icons.account_circle,
+                color: Colors.white,
+                size: 30,
+              ),
+            ),
+          ),
+        ],
       ),
+
       body: Stack(
         children: [
           Opacity(
@@ -44,7 +122,6 @@ class HomeScreen extends StatelessWidget {
               height: double.infinity,
             ),
           ),
-
           Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -71,7 +148,7 @@ class HomeScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const NeoScreen()),
+                        MaterialPageRoute(builder: (_) => const NeoScreen()),
                       );
                     },
                     icon: const Icon(Icons.travel_explore),

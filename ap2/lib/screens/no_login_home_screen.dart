@@ -1,6 +1,5 @@
 import 'package:ap2/screens/login_screen.dart';
 import 'package:flutter/material.dart';
-import 'neo_screen.dart';
 
 class NoLoginHomeScreen extends StatelessWidget {
   const NoLoginHomeScreen({super.key});
